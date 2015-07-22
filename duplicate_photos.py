@@ -11,6 +11,7 @@ from PIL import ImageDraw
 config = {
     'frames': 16,
     'batches': 500,
+    'start_batch': 130,
     'source': '/sayfromage/photos_bullet_16_500/',
     'target': '/sayfromage/photos_bullet_16_5000/',
     'overlay': True,
@@ -40,37 +41,37 @@ def is_file_valid(my_file):
 
 
 def duplicate(current_files):
-    current = 0
-    for count in range(1, config['batches']+1):
+    current_batch = 0
+    for batch in range(config['start_batch'], config['batches']+1):
         for frame in range(1, config['frames']+1):
-            source = "%s%s" % (config['source'], current_files[current])
-            target = "%sIMG_%04d_%02d.JPG" % (config['target'], count, frame)
+            source = "%s%s" % (config['source'], current_files[current_batch])
+            target = "%sIMG_%04d_%02d.JPG" % (config['target'], batch, frame)
             what = "COPIED"
             if not os.path.exists(target):
-                create_duplicate(source, target, count, frame)
+                create_duplicate(source, target, batch, frame)
             else:
                 if config['overwrite']:
-                    create_duplicate(source, target, count, frame)
+                    create_duplicate(source, target, batch, frame)
                 else:
                     what = "SKIPPED"
 
-            print "%04d: %s --> %s [%s]" % (count, source, target, what)
-            current += 1
-            if current >= len(current_files):
-                current = 0
+            print "%04d: %s --> %s [%s]" % (batch, source, target, what)
+            current_batch += 1
+            if current_batch >= len(current_files):
+                current_batch = 0
 
         if (what != "SKIPPED"):
             print 'stopping for %s seconds' % config['delay_between_batches']
             time.sleep(config['delay_between_batches'])
 
 
-def create_duplicate(source, target, count, frame):
+def create_duplicate(source, target, batch, frame):
     if config['overlay']:
         img = Image.open(source)
         draw = ImageDraw.Draw(img)
         draw.text(
             (1450, 60),
-            "%04d-%02d" % (count, frame),
+            "%04d-%02d" % (batch, frame),
             (255, 14, 179),
             font=config['font']
         )
