@@ -1,8 +1,6 @@
 import os
 import sys
 import shutil
-import piexif
-
 
 from PIL import Image
 from PIL import ImageFont
@@ -11,12 +9,12 @@ from PIL import ImageDraw
 
 config = {
     'frames': 16,
-    'batches': 1,
+    'batches': 500,
     'source': '/sayfromage/photos_bullet_16_500/',
     'target': '/sayfromage/photos_bullet_16_5000/',
     'overlay': True,
     'overlay-quality': 95,
-    'overwrite': True,
+    'overwrite': False,
     'font': ImageFont.truetype("Courier New Bold.ttf", 100)
 }
 
@@ -85,6 +83,8 @@ duplicate(scan_folder())
 
 """
 EXIF STUFF:
+
+import piexif
 
         # exif
         exif_dict = piexif.load(img.info['exif'])
