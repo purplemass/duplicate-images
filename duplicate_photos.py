@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+import time
 
 from PIL import Image
 from PIL import ImageFont
@@ -15,7 +16,9 @@ config = {
     'overlay': True,
     'overlay-quality': 95,
     'overwrite': False,
-    'font': ImageFont.truetype("Courier New Bold.ttf", 100)
+    'font': ImageFont.truetype("Courier New Bold.ttf", 100),
+    'delay_between_batches': 2,  # in seconds
+    'delay_between_frames': 0.5,  # in seconds
 }
 
 
@@ -56,6 +59,10 @@ def duplicate(current_files):
             if current >= len(current_files):
                 current = 0
 
+        if (what != "SKIPPED"):
+            print 'stopping for %s seconds' % config['delay_between_batches']
+            time.sleep(config['delay_between_batches'])
+
 
 def create_duplicate(source, target, count, frame):
     if config['overlay']:
@@ -70,6 +77,8 @@ def create_duplicate(source, target, count, frame):
         img.save(target, quality=config['overlay-quality'])
     else:
         shutil.copy2(source, target)
+    time.sleep(config['delay_between_frames'])
+
 
 if not os.path.exists(config['source']):
     print "\n%s doesn't exists!!!!\n\n" % config['source']
