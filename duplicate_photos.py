@@ -2,11 +2,29 @@ import os
 import sys
 import shutil
 import time
+import argparse
 
 from PIL import Image
 from PIL import ImageDraw
 
 from config import config
+
+
+def check_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-b", "--start_batch", required=False)
+    parser.add_argument("-x", "--how_many_batches", required=False)
+
+    try:
+        args = parser.parse_args()
+    except SystemExit:
+        print "Arguments error: %s" % sys.argv
+        sys.exit(0)
+
+    if args.start_batch:
+        config['start_batch'] = int(args.start_batch)
+    if args.how_many_batches:
+        config['how_many_batches'] = int(args.how_many_batches)
 
 
 def scan_folder():
@@ -50,7 +68,8 @@ def duplicate(current_files):
             if current_batch >= len(current_files):
                 current_batch = 0
 
-        if (what != "SKIPPED"):
+        if (what != "SKIPPED" and
+                batch >= config['start_batch'] + config['how_many_batches']):
             print 'stopping for %s seconds' % config['delay_between_batches']
             time.sleep(config['delay_between_batches'])
 
@@ -71,15 +90,19 @@ def create_duplicate(source, target, batch, frame):
     time.sleep(config['delay_between_frames'])
 
 
-if not os.path.exists(config['source']):
-    print "\n%s doesn't exists!!!!\n\n" % config['source']
-    sys.exit(0)
+if __name__ == '__main__':
 
-if not os.path.exists(config['target']):
-    print "\n%s doesn't exists!!!!\n" % config['target']
-    sys.exit(0)
+    if not os.path.exists(config['source']):
+        print "\n%s doesn't exists!!!!\n\n" % config['source']
+        sys.exit(0)
 
-duplicate(scan_folder())
+    if not os.path.exists(config['target']):
+        print "\n%s doesn't exists!!!!\n" % config['target']
+        sys.exit(0)
+
+    check_arguments()
+    duplicate(scan_folder())
+
 
 """
 EXIF STUFF:
