@@ -68,10 +68,14 @@ def duplicate(current_files):
             if current_batch >= len(current_files):
                 current_batch = 0
 
-        if (what != "SKIPPED" and
-                batch >= config['start_batch'] + config['how_many_batches']):
-            print 'stopping for %s seconds' % config['delay_between_batches']
-            time.sleep(config['delay_between_batches'])
+        if (what != "SKIPPED"):
+            if (config['enable_input']):
+                raw_input("Enter to continue >")
+
+            else:
+                print 'stopping for %s seconds' % (
+                    config['delay_between_batches'])
+                time.sleep(config['delay_between_batches'])
 
 
 def create_duplicate(source, target, batch, frame):
