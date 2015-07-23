@@ -11,7 +11,7 @@ from PIL import ImageDraw
 config = {
     'frames': 16,
     'batches': 500,
-    'start_batch': 130,
+    'start_batch': 1,
     'source': '/sayfromage/photos_bullet_16_500/',
     'target': '/sayfromage/photos_bullet_16_5000/',
     'overlay': True,
@@ -55,7 +55,8 @@ def duplicate(current_files):
                 else:
                     what = "SKIPPED"
 
-            print "%04d: %s --> %s [%s]" % (batch, source, target, what)
+            print "%04d-%02d: %s --> %s [%s]" % (
+                batch, frame, source, target, what)
             current_batch += 1
             if current_batch >= len(current_files):
                 current_batch = 0
