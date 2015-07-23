@@ -1,0 +1,10 @@
+config.py
+
+*.pyc
+*.ai
+*.psd
+*.pdf
+
+*.DS*
+._*
+Thumbs.db
