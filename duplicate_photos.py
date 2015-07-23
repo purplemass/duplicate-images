@@ -28,7 +28,10 @@ def is_file_valid(my_file):
 
 def duplicate(current_files):
     current_batch = 0
-    for batch in range(config['start_batch'], config['batches']+1):
+    for batch in range(
+        config['start_batch'],
+        config['start_batch'] + config['how_many_batches']
+    ):
         for frame in range(1, config['frames']+1):
             source = "%s%s" % (config['source'], current_files[current_batch])
             target = "%sIMG_%04d_%02d.JPG" % (config['target'], batch, frame)
@@ -53,7 +56,7 @@ def duplicate(current_files):
 
 
 def create_duplicate(source, target, batch, frame):
-    if config['overlay']:
+    if config['overlay-text']:
         img = Image.open(source)
         draw = ImageDraw.Draw(img)
         draw.text(
@@ -62,7 +65,7 @@ def create_duplicate(source, target, batch, frame):
             (255, 14, 179),
             font=config['font']
         )
-        img.save(target, quality=config['overlay-quality'])
+        img.save(target, quality=config['image-quality'])
     else:
         shutil.copy2(source, target)
     time.sleep(config['delay_between_frames'])
