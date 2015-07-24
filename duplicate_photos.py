@@ -14,6 +14,7 @@ def check_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--start_batch", required=False)
     parser.add_argument("-x", "--how_many_batches", required=False)
+    parser.add_argument("-i", "--enable_input", required=False)
 
     try:
         args = parser.parse_args()
@@ -25,6 +26,11 @@ def check_arguments():
         config['start_batch'] = int(args.start_batch)
     if args.how_many_batches:
         config['how_many_batches'] = int(args.how_many_batches)
+    if args.enable_input:
+        if (args.enable_input == "true"):
+            config['enable_input'] = True
+        else:
+            config['enable_input'] = False
 
 
 def scan_folder():
@@ -83,7 +89,7 @@ def create_duplicate(source, target, batch, frame):
         img = Image.open(source)
         draw = ImageDraw.Draw(img)
         draw.text(
-            (1450, 60),
+            (800, 60),
             "%04d-%02d" % (batch, frame),
             (255, 14, 179),
             font=config['font']
