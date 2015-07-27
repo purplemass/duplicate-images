@@ -7,6 +7,8 @@ import argparse
 from PIL import Image
 from PIL import ImageDraw
 
+import piexif
+
 from config import config
 
 
@@ -87,6 +89,11 @@ def duplicate(current_files):
 def create_duplicate(source, target, batch, frame):
     if config['overlay-text']:
         img = Image.open(source)
+        # exif
+        exif_dict = piexif.load(img.info['exif'])
+        exif_dict["0th"][piexif.ImageIFD.Orientation] = 8
+        exif_bytes = piexif.dump(exif_dict)
+        # text overlay
         draw = ImageDraw.Draw(img)
         draw.text(
             (800, 60),
@@ -94,7 +101,7 @@ def create_duplicate(source, target, batch, frame):
             (255, 14, 179),
             font=config['font']
         )
-        img.save(target, quality=config['image-quality'])
+        img.save(target, quality=config['image-quality'], exif=exif_bytes)
     else:
         shutil.copy2(source, target)
     time.sleep(config['delay_between_frames'])
@@ -117,10 +124,6 @@ if __name__ == '__main__':
 """
 EXIF STUFF:
 
-import piexif
-
-        # exif
-        exif_dict = piexif.load(img.info['exif'])
         # img = img.transpose(Image.ROTATE_90)
         # img = img.rotate(Image.ROTATE_90, expand=True)
 
