@@ -60,7 +60,12 @@ def duplicate(current_files):
     ):
         for frame in range(1, config['frames']+1):
             source = "%s%s" % (config['source'], current_files[current_batch])
-            target = "%sIMG_%04d_%02d.JPG" % (config['target'], batch, frame)
+            if config['image_format'] == "XXXX_XX":
+                target = "%sIMG_%04d_%02d.JPG" % (
+                    config['target'], batch, frame)
+            else:
+                target = "%sIMG_%04d.JPG" % (
+                    config['target'], batch)
             what = "COPIED"
             if not os.path.exists(target):
                 create_duplicate(source, target, batch, frame)
@@ -87,20 +92,25 @@ def duplicate(current_files):
 
 
 def create_duplicate(source, target, batch, frame):
-    if config['overlay-text']:
+    if config['overlay-text'] or config['resize']:
         img = Image.open(source)
-        # exif
-        exif_dict = piexif.load(img.info['exif'])
-        exif_dict["0th"][piexif.ImageIFD.Orientation] = 8
-        exif_bytes = piexif.dump(exif_dict)
-        # text overlay
-        draw = ImageDraw.Draw(img)
-        draw.text(
-            (800, 60),
-            "%04d-%02d" % (batch, frame),
-            (255, 14, 179),
-            font=config['font']
-        )
+        if config['overlay-text']:
+            # exif
+            exif_dict = piexif.load(img.info['exif'])
+            exif_dict["0th"][piexif.ImageIFD.Orientation] = 8
+            exif_bytes = piexif.dump(exif_dict)
+            # text overlay
+            if config['image_format'] == "XXXX_XX":
+                text = "%04d-%02d" % (batch, frame)
+            else:
+                text = "%04d" % (batch)
+            draw = ImageDraw.Draw(img)
+            draw.text(
+                (800, 60),
+                text,
+                (255, 14, 179),
+                font=config['font']
+            )
         if config['resize']:
             img = img.resize(
                 (config['resize_width'], config['resize_height']),

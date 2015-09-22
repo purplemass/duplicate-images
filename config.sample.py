@@ -9,6 +9,7 @@ config = {
     'target': '/sayfromage/photos_bullet_16_5000/',
     'overlay-text': True,
     'image-quality': 95,
+    'image_format': 'XXXX',
     'font': ImageFont.truetype("Courier New Bold.ttf", 250),
     'delay_between_batches': 2,  # in seconds
     'delay_between_frames': 0.5,  # in seconds
