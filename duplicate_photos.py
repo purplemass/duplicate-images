@@ -101,6 +101,10 @@ def create_duplicate(source, target, batch, frame):
             (255, 14, 179),
             font=config['font']
         )
+        if config['resize']:
+            img = img.resize(
+                (config['resize_width'], config['resize_height']),
+                Image.ANTIALIAS)
         img.save(target, quality=config['image-quality'], exif=exif_bytes)
     else:
         shutil.copy2(source, target)

@@ -13,4 +13,7 @@ config = {
     'delay_between_batches': 2,  # in seconds
     'delay_between_frames': 0.5,  # in seconds
     'enable_input': True,
+    'resize': True,
+    'resize_width': 1152,
+    'resize_height': 768
 }
