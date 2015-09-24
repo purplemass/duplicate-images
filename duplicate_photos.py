@@ -54,6 +54,7 @@ def is_file_valid(my_file):
 
 def duplicate(current_files):
     current_batch = 0
+    xxx_inc = 0
     for batch in range(
         config['start_batch'],
         config['start_batch'] + config['how_many_batches']
@@ -65,7 +66,7 @@ def duplicate(current_files):
                     config['target'], batch, frame)
             else:
                 target = "%sIMG_%04d.JPG" % (
-                    config['target'], batch)
+                    config['target'], (xxx_inc*config['frames']) + frame)
             what = "COPIED"
             if not os.path.exists(target):
                 create_duplicate(source, target, batch, frame)
@@ -89,6 +90,7 @@ def duplicate(current_files):
                 print 'stopping for %s seconds' % (
                     config['delay_between_batches'])
                 time.sleep(config['delay_between_batches'])
+        xxx_inc += 1
 
 
 def create_duplicate(source, target, batch, frame):
