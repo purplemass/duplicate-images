@@ -54,7 +54,7 @@ def is_file_valid(my_file):
 
 def duplicate(current_files):
     current_batch = 0
-    xxx_inc = 0
+    xxx_inc = config['start_batch'] - 1
     for batch in range(
         config['start_batch'],
         config['start_batch'] + config['how_many_batches']
