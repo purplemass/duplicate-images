@@ -96,11 +96,12 @@ def duplicate(current_files):
 def create_duplicate(source, target, batch, frame):
     if config['overlay-text'] or config['resize']:
         img = Image.open(source)
-        if config['overlay-text']:
-            # exif
+        exif_bytes = None
+        if config['write_exif']:
             exif_dict = piexif.load(img.info['exif'])
             exif_dict["0th"][piexif.ImageIFD.Orientation] = 8
             exif_bytes = piexif.dump(exif_dict)
+        if config['overlay-text']:
             # text overlay
             if config['image_format'] == "XXXX_XX":
                 text = "%04d-%02d" % (batch, frame)
@@ -117,7 +118,10 @@ def create_duplicate(source, target, batch, frame):
             img = img.resize(
                 (config['resize_width'], config['resize_height']),
                 Image.ANTIALIAS)
-        img.save(target, quality=config['image-quality'], exif=exif_bytes)
+        if config['write_exif']:
+            img.save(target, quality=config['image-quality'], exif=exif_bytes)
+        else:
+            img.save(target, quality=config['image-quality'])
     else:
         shutil.copy2(source, target)
     time.sleep(config['delay_between_frames'])
