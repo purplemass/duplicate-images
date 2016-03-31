@@ -21,7 +21,7 @@ def check_arguments():
     try:
         args = parser.parse_args()
     except SystemExit:
-        print "Arguments error: %s" % sys.argv
+        print("Arguments error: %s" % sys.argv)
         sys.exit(0)
 
     if args.start_batch:
@@ -76,19 +76,19 @@ def duplicate(current_files):
                 else:
                     what = "SKIPPED"
 
-            print "%04d-%02d: %s --> %s [%s]" % (
-                batch, frame, source, target, what)
+            print("%04d-%02d: %s --> %s [%s]" % (
+                batch, frame, source, target, what))
             current_batch += 1
             if current_batch >= len(current_files):
                 current_batch = 0
 
         if (what != "SKIPPED"):
             if (config['enable_input']):
-                raw_input("Enter to continue >")
+                input("Enter to continue >")
 
             else:
-                print 'stopping for %s seconds' % (
-                    config['delay_between_batches'])
+                print('stopping for %s seconds' % (
+                    config['delay_between_batches']))
                 time.sleep(config['delay_between_batches'])
         xxx_inc += 1
 
@@ -126,11 +126,11 @@ def create_duplicate(source, target, batch, frame):
 if __name__ == '__main__':
 
     if not os.path.exists(config['source']):
-        print "\n%s doesn't exists!!!!\n\n" % config['source']
+        print("\n%s doesn't exists!!!!\n\n" % config['source'])
         sys.exit(0)
 
     if not os.path.exists(config['target']):
-        print "\n%s doesn't exists!!!!\n" % config['target']
+        print("\n%s doesn't exists!!!!\n" % config['target'])
         sys.exit(0)
 
     check_arguments()
