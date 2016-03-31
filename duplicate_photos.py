@@ -3,6 +3,7 @@ import sys
 import shutil
 import time
 import argparse
+import subprocess
 
 from PIL import Image
 from PIL import ImageDraw
@@ -94,7 +95,23 @@ def duplicate(current_files):
 
 
 def create_duplicate_im(source, target, batch, frame):
-    pass
+    cmd = """
+        convert %s[x%s] \
+            -fuzz %s \
+            -alpha set \
+            -channel RGBA \
+            -fill none \
+            -opaque "%s" \
+            -auto-orient \
+            %s
+    """ % (
+        source,
+        config['resize_width'],
+        "15%",
+        "#13843D",
+        target.replace('.JPG', '.png')
+    )
+    output, error = execute_command(cmd)
 
 
 def create_duplicate(source, target, batch, frame):
@@ -103,7 +120,9 @@ def create_duplicate(source, target, batch, frame):
         exif_bytes = None
         if config['write_exif']:
             exif_dict = piexif.load(img.info['exif'])
-            exif_dict["0th"][piexif.ImageIFD.Orientation] = 8
+            # from pprint import pprint
+            # pprint(exif_dict)
+            exif_dict["0th"][piexif.ImageIFD.Orientation] = 4
             exif_bytes = piexif.dump(exif_dict)
         if config['overlay-text']:
             # text overlay
@@ -129,6 +148,13 @@ def create_duplicate(source, target, batch, frame):
     else:
         shutil.copy2(source, target)
     time.sleep(config['delay_between_frames'])
+
+
+def execute_command(cmd):
+    process = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
+    return output, error
 
 
 if __name__ == '__main__':
