@@ -67,14 +67,14 @@ def duplicate(current_files):
             else:
                 target = "%sIMG_%04d.JPG" % (
                     config['target'], (xxx_inc*config['frames']) + frame)
-            what = "COPIED"
-            if not os.path.exists(target):
-                create_duplicate(source, target, batch, frame)
-            else:
-                if config['overwrite']:
-                    create_duplicate(source, target, batch, frame)
+            if not os.path.exists(target) or config['overwrite']:
+                what = "COPIED"
+                if config['use_imagemagick']:
+                    create_duplicate_im(source, target, batch, frame)
                 else:
-                    what = "SKIPPED"
+                    create_duplicate(source, target, batch, frame)
+            else:
+                what = "SKIPPED"
 
             print("%04d-%02d: %s --> %s [%s]" % (
                 batch, frame, source, target, what))
@@ -91,6 +91,10 @@ def duplicate(current_files):
                     config['delay_between_batches']))
                 time.sleep(config['delay_between_batches'])
         xxx_inc += 1
+
+
+def create_duplicate_im(source, target, batch, frame):
+    pass
 
 
 def create_duplicate(source, target, batch, frame):

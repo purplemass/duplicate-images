@@ -16,5 +16,7 @@ config = {
     'enable_input': True,
     'resize': True,
     'resize_width': 1152,
-    'resize_height': 768
+    'resize_height': 768,
+    'write_exif': True,
+    'use_imagemagick': False,
 }
