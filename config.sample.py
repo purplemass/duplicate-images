@@ -18,5 +18,7 @@ config = {
     'resize_width': 1152,
     'resize_height': 768,
     'write_exif': True,
-    'use_imagemagick': False,
+    'greenscreen': False,
+    'greenscreen-colour': '#13843D',
+    'greenscreen-fuzz': '15%',
 }

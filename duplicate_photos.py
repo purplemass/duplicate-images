@@ -70,8 +70,8 @@ def duplicate(current_files):
                     config['target'], (xxx_inc*config['frames']) + frame)
             if not os.path.exists(target) or config['overwrite']:
                 what = "COPIED"
-                if config['use_imagemagick']:
-                    create_duplicate_im(source, target, batch, frame)
+                if config['greenscreen']:
+                    create_duplicate_greenscreen(source, target, batch, frame)
                 else:
                     create_duplicate(source, target, batch, frame)
             else:
@@ -94,7 +94,7 @@ def duplicate(current_files):
         xxx_inc += 1
 
 
-def create_duplicate_im(source, target, batch, frame):
+def create_duplicate_greenscreen(source, target, batch, frame):
     cmd = """
         convert %s[x%s] \
             -fuzz %s \
@@ -107,9 +107,9 @@ def create_duplicate_im(source, target, batch, frame):
     """ % (
         source,
         config['resize_width'],
-        "15%",
-        "#13843D",
-        target.replace('.JPG', '.png')
+        config['greenscreen-fuzz'],
+        config['greenscreen-colour'],
+        target.replace('.JPG', '.jpg')
     )
     output, error = execute_command(cmd)
 
