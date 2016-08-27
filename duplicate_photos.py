@@ -60,18 +60,19 @@ def duplicate(current_files):
         config['start_batch'],
         config['start_batch'] + config['how_many_batches']
     ):
-        for frame in range(1, config['frames']+1):
+        for frame in range(1, config['frames'] + 1):
             source = "%s%s" % (config['source'], current_files[current_batch])
             if config['image_format'] == "XXXX_XX":
                 target = "%sIMG_%04d_%02d.JPG" % (
                     config['target'], batch, frame)
             else:
                 target = "%sIMG_%04d.JPG" % (
-                    config['target'], (xxx_inc*config['frames']) + frame)
+                    config['target'], (xxx_inc * config['frames']) + frame)
             if not os.path.exists(target) or config['overwrite']:
                 what = "COPIED"
                 if config['greenscreen']:
                     create_duplicate_greenscreen(source, target, batch, frame)
+                    create_duplicate(target, target, batch, frame)
                 else:
                     create_duplicate(source, target, batch, frame)
             else:
@@ -118,6 +119,10 @@ def create_duplicate(source, target, batch, frame):
     if config['overlay-text'] or config['resize']:
         img = Image.open(source)
         exif_bytes = None
+        if config['resize']:
+            img = img.resize(
+                (config['resize_width'], config['resize_height']),
+                Image.ANTIALIAS)
         if config['write_exif']:
             exif_dict = piexif.load(img.info['exif'])
             # from pprint import pprint
@@ -132,15 +137,11 @@ def create_duplicate(source, target, batch, frame):
                 text = "%04d" % (batch)
             draw = ImageDraw.Draw(img)
             draw.text(
-                (800, 60),
+                (60, 60),
                 text,
                 (255, 14, 179),
                 font=config['font']
             )
-        if config['resize']:
-            img = img.resize(
-                (config['resize_width'], config['resize_height']),
-                Image.ANTIALIAS)
         if config['write_exif']:
             img.save(target, quality=config['image-quality'], exif=exif_bytes)
         else:
