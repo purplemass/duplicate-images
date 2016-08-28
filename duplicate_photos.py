@@ -17,7 +17,7 @@ def check_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--start_batch", required=False)
     parser.add_argument("-x", "--how_many_batches", required=False)
-    parser.add_argument("-i", "--enable_input", required=False)
+    parser.add_argument("-i", "--user_confirm", required=False)
 
     try:
         args = parser.parse_args()
@@ -29,11 +29,11 @@ def check_arguments():
         config['start_batch'] = int(args.start_batch)
     if args.how_many_batches:
         config['how_many_batches'] = int(args.how_many_batches)
-    if args.enable_input:
-        if (args.enable_input == "true"):
-            config['enable_input'] = True
+    if args.user_confirm:
+        if (args.user_confirm == "true"):
+            config['user_confirm'] = True
         else:
-            config['enable_input'] = False
+            config['user_confirm'] = False
 
 
 def scan_folder():
@@ -70,11 +70,12 @@ def duplicate(current_files):
                     config['target'], (xxx_inc * config['frames']) + frame)
             if not os.path.exists(target) or config['overwrite']:
                 what = "COPIED"
-                if config['greenscreen']:
-                    create_duplicate_greenscreen(source, target, batch, frame)
-                    create_duplicate(target, target, batch, frame)
+                tmp = '/tmp/duplicate.JPG'
+                create_duplicate(source, tmp, batch, frame)
+                if os.path.exists(tmp):
+                    shutil.move(tmp, target)
                 else:
-                    create_duplicate(source, target, batch, frame)
+                    print 'Image not created!'
             else:
                 what = "SKIPPED"
 
@@ -85,8 +86,8 @@ def duplicate(current_files):
                 current_batch = 0
 
         if (what != "SKIPPED"):
-            if (config['enable_input']):
-                input("Enter to continue >")
+            if (config['user_confirm']):
+                raw_input("Enter to continue >")
 
             else:
                 print('stopping for %s seconds' % (
@@ -95,27 +96,47 @@ def duplicate(current_files):
         xxx_inc += 1
 
 
-def create_duplicate_greenscreen(source, target, batch, frame):
-    cmd = """
-        convert %s[x%s] \
+def create_duplicate(source, target, batch, frame):
+    cmd = "convert %s[x%s] -auto-orient" % (source, config['resize_width'])
+    if config['overlay-text']:
+        if config['image_format'] == "XXXX_XX":
+            text = "%04d-%02d" % (batch, frame)
+        else:
+            text = "%04d" % (batch)
+
+        cmd = """
+            %s \
+            -fill white -box '#00770080' \
+            -pointsize %s \
+            -font %s \
+            -size %sx -annotate +0+%s '%s' \
+        """ % (
+            cmd,
+            config['resize_width'] / 5,
+            config['font'],
+            config['resize_width'] / 2,
+            config['resize_width'] / 5,
+            text
+        )
+    if config['greenscreen']:
+        cmd = """
+            %s \
             -fuzz %s \
             -alpha set \
             -channel RGBA \
             -fill none \
             -opaque "%s" \
-            -auto-orient \
-            %s
-    """ % (
-        source,
-        config['resize_width'],
-        config['greenscreen-fuzz'],
-        config['greenscreen-colour'],
-        target.replace('.JPG', '.jpg')
-    )
+        """ % (
+            cmd,
+            config['greenscreen-fuzz'],
+            config['greenscreen-colour'],
+        )
+    cmd = "%s %s" % (cmd, target.replace('.jpg', '.JPG'))
+
     output, error = execute_command(cmd)
 
 
-def create_duplicate(source, target, batch, frame):
+def create_duplicateOLD(source, target, batch, frame):
     if config['overlay-text'] or config['resize']:
         img = Image.open(source)
         exif_bytes = None
@@ -155,6 +176,10 @@ def execute_command(cmd):
     process = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, error = process.communicate()
+    if error:
+        print 'Error:'
+        print output
+        print error
     return output, error
 
 
