@@ -11,8 +11,8 @@ Install
 
 This assumes that `py` is '2.7' and that `virtualenv` is installed.
 
-    $ virtualenv ~/ENV/dps
-    $ source ~/ENV/dps/bin/activate
+    $ virtualenv  -p /usr/bin/python2.7 ~/.env/duplicate
+    $ source ~/.env/duplicate/bin/activate
     $ pip install -r requirements.txt
 
 
