@@ -28,13 +28,13 @@ Running
 
 Run the script as follows:
 
-    $ pyhton duplication_photos.py
+    $ python duplication_photos.py
 
 This will read its parameters from `config.py`.
 
 You can overide some of the parameters like this:
 
-    $ pyhton duplication_photos.py -b 100 -x 10
+    $ python duplication_photos.py -b 100 -x 10
 
 where [-b START_BATCH] [-x HOW_MANY_BATCHES] [-i ENABLE_INPUT]
 
