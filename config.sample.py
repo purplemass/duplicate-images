@@ -15,6 +15,9 @@ config = {
     # to get list of available fonts
     # identify -list Type
     'font': 'CourierNew',
+    # font size is determined by the text area size which is
+    # resize_width divided by font_size
+    'font_size': 8,
     'delay_between_batches': 30,  # in seconds
     'delay_between_frames': 1,  # in seconds
     'user_confirm': False,

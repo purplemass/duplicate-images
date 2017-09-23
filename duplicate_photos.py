@@ -112,7 +112,7 @@ def create_duplicate(source, target, batch, frame):
             -size %sx -annotate +0+%s '%s' \
         """ % (
             cmd,
-            config['resize_width'] / 5,
+            config['resize_width'] / config['font_size'],
             config['font'],
             config['resize_width'] / 2,
             config['resize_width'] / 5,
